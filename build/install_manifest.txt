@@ -1,2 +1,0 @@
-/usr/lib/libcutils.so
-/usr/include/cstring.h

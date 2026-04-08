@@ -1,1 +1,0 @@
-/usr/bin/cc -fPIC -no-pie -g -O2 -shared -Wl,--dependency-file=CMakeFiles/cutils.dir/link.d -Wl,-soname,libcutils.so -o libcutils.so CMakeFiles/cutils.dir/src/cstring.c.o
