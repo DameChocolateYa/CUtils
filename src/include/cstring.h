@@ -1,3 +1,6 @@
+#ifndef STRING_H
+#define STRING_H
+
 #include <stdlib.h>
 
 typedef struct {
@@ -18,3 +21,5 @@ extern void cstring_cutpos(CString *s1, int begin, int end);
 extern void cstring_cutstr(CString *s1, const char *substr);
 extern void cstring_delete(CString *string);
 extern char *cstring_str(CString string);
+
+#endif

@@ -6,7 +6,7 @@ project(CUtils)
 
 set(CMAKE_C_FLAGS "-no-pie -g -O2")
 
-add_library(cutils SHARED src/cstring.c)
+add_library(cutils SHARED src/cstring.c src/cvector.c)
 target_include_directories(cutils
 PUBLIC
     src/include
