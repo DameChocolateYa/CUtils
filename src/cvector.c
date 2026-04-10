@@ -99,3 +99,14 @@ CString cvector_getcstring(CVector vector, size_t index) {
     CString *ptr = (CString *)cvector_get(vector, index);
     return ptr ? *ptr : (CString){NULL, 0};
 }
+
+void cvector_destroy(CVector *vector) {
+    if (!vector->data || !vector->is_membusy)
+        return;
+    
+    free(vector->data);
+    vector->capacity = 0;
+    vector->size = 0;
+    vector->elem_size = 0;
+    vector->is_membusy = false;
+}

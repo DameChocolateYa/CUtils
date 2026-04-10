@@ -6,7 +6,7 @@
 typedef struct {
     char *data; // main string with memory allocation
     size_t size; // NEVER includes null terminator
-    bool mem_busy; // == !data
+    bool mem_busy; // == data
 } CString;
 
 CString cstring_new() {
@@ -153,7 +153,7 @@ void cstring_cutstr(CString *string, const char *substr) {
     string->data[string->size] = '\0';
 }
 
-void cstring_delete(CString *string) {
+void cstring_destroy(CString *string) {
     if (string->mem_busy) {
         free(string->data);
         string->size = 0;

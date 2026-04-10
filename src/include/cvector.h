@@ -24,5 +24,6 @@ extern void cvector_pushcstring(CVector *vector, CString val);
 extern void *cvector_get(CVector vector, size_t index);
 extern int cvector_getint(CVector vector, size_t index);
 extern CString cvector_getcstring(CVector vector, size_t index);
+extern void cvector_destroy(CVector *vector);
 
 #endif
