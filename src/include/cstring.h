@@ -20,6 +20,8 @@ extern void cstring_cat(CString *string, const char *s2);
 extern void cstring_merge(CString *s1, CString s2);
 extern void cstring_cutpos(CString *s1, int begin, int end);
 extern void cstring_cutstr(CString *s1, const char *substr);
+extern char *cstring_substr(CString string, int begin, int end);
+extern void cstring_repl(CString *string, const char *old, const char *new);
 extern void cstring_destroy(CString *string);
 extern char *cstring_str(CString string);
 

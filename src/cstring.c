@@ -119,6 +119,7 @@ void cstring_merge(CString *s1, CString s2) {
 
     strcpy(s1->data + s1->size, s2.data);
     s1->size += s2.size;
+    s1->data[s1->size + 1] = '\0';
 }
 
 void cstring_cutpos(CString *string, int begin, int end) {
@@ -151,6 +152,82 @@ void cstring_cutstr(CString *string, const char *substr) {
     string->data = realloc(string->data, string->size + 1);
 
     string->data[string->size] = '\0';
+}
+
+char *cstring_substr(CString string, int begin, int end) {
+    if (begin > end) {
+        int temp = begin;
+        begin = end;
+        end = temp;
+    }
+
+    if (begin < 0 || end > string.size) {
+        return NULL;
+    }
+
+    int lenght = end - begin + 1;
+    char *s = malloc(lenght);
+    for (int i = 0; i < lenght; i++) {
+        s[i] = string.data[begin + i];
+    }
+    s[lenght] = '\0';
+
+    return s;
+}
+
+CString cstring_sub(CString string, int begin, int end) {
+    if (begin > end) {
+        int temp = begin;
+        begin = end;
+        end = temp;
+    }
+
+    if (begin < 0 || end > string.size) {
+        return (CString){NULL, 0};
+    }
+
+    int lenght = end - begin + 1;
+    char *s = malloc(lenght + 1);
+    for (int i = 0; i < lenght; i++) {
+        s[i] = string.data[begin + i];
+    }
+    s[lenght] = '\0';
+
+    CString new_string = cstring_fromstr(s);
+    free(s);
+
+    return new_string;
+}
+
+/*
+  fun repl(self: &String, old: str, new: str) {
+    var string: String = *self;
+
+    var src: str = string.src;
+    var loc: int = string::find(src, old);
+    if loc == -1 {leave;}
+
+    var after: String = String::sub(self, loc + string::len(old), string::len(src));
+    String::cut(self, loc, string.size);
+    string = *self;
+    String::cat_str(self, new);
+    String::cat_str(self, after);
+
+    String::delete(&after);
+  } pub;
+*/
+
+void cstring_destroy(CString *string);
+void cstring_repl(CString *string, const char *old, const char *new) {
+    int loc = cstring_find(*string, old);
+    if (loc == -1) return;
+
+    CString after = cstring_sub(*string, loc + strlen(old), string->size);
+    cstring_cutpos(string, loc, string->size);
+    cstring_cat(string, new);
+    cstring_merge(string, after);
+
+    cstring_destroy(&after);
 }
 
 void cstring_destroy(CString *string) {
