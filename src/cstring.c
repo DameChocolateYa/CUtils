@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdarg.h>
+
+#include "include/critical.h"
 
 typedef struct {
     char *data; // main string with memory allocation
@@ -199,24 +202,6 @@ CString cstring_sub(CString string, int begin, int end) {
     return new_string;
 }
 
-/*
-  fun repl(self: &String, old: str, new: str) {
-    var string: String = *self;
-
-    var src: str = string.src;
-    var loc: int = string::find(src, old);
-    if loc == -1 {leave;}
-
-    var after: String = String::sub(self, loc + string::len(old), string::len(src));
-    String::cut(self, loc, string.size);
-    string = *self;
-    String::cat_str(self, new);
-    String::cat_str(self, after);
-
-    String::delete(&after);
-  } pub;
-*/
-
 void cstring_destroy(CString *string);
 void cstring_repl(CString *string, const char *old, const char *new) {
     int loc = cstring_find(*string, old);
@@ -228,6 +213,84 @@ void cstring_repl(CString *string, const char *old, const char *new) {
     cstring_merge(string, after);
 
     cstring_destroy(&after);
+}
+
+void cstring_fmt(CString *string, ...) {
+    va_list args;
+    va_start(args, string);
+
+    int len;
+    char *s = strbuf(string->data, &len, args);
+
+    va_end(args);
+
+    free(string->data);
+    string->size = len;
+    string->data = malloc(string->size + 1);
+    strcpy(string->data, s);
+    string->data[string->size + 1] = '\0';
+}
+
+void cstring_newfmt(CString *string, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    int len; // strbuf requires it by default
+    char *s = strbuf(fmt, &len, args);
+
+    va_end(args);
+
+    free(string->data);
+    string->size = len;
+    string->data = malloc(string->size + 1);
+    strcpy(string->data, s);
+    string->data[string->size + 1] = '\0';
+}
+
+void cstring_newask(CString *string, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    int len;
+    char *s = strbuf(fmt, &len, args);
+
+    va_end(args);
+
+    printf(s);
+    free(s);
+
+    char *ret = malloc(120);
+    scanf("%120s", ret);
+
+    ret = realloc(ret, strlen(ret) + 1);
+    
+    free(string->data);
+    string->size = strlen(ret);
+    string->data = ret;
+    string->data[string->size + 1] = '\0';
+}
+
+void cstring_ask(CString *string, ...) {
+    va_list args;
+    va_start(args, string);
+
+    int len;
+    char *s = strbuf(string->data, &len, args);
+
+    va_end(args);
+
+    printf(s);
+    free(s);
+
+    char *ret = malloc(120);
+    scanf("%120s", ret);
+    
+    ret = realloc(ret, strlen(ret) + 1);
+
+    free(string->data);
+    string->size = strlen(ret);
+    string->data = ret;
+    string->data[string->size + 1] = '\0';
 }
 
 void cstring_destroy(CString *string) {
@@ -243,4 +306,53 @@ char *cstring_str(CString string) {
     }
     
     return string.data;
+}
+
+bool cstring_isempty(CString string) {
+    return !string.data || !string.mem_busy || string.size <= 0;
+}
+
+// Other non needed stuff for basic use
+void cstring_upper(CString *string) {
+    if (cstring_isempty(*string))
+        return;
+    
+    for (size_t i = 0; string->data[i] != '\0'; i++) {
+        if (string->data[i] >= 'a' && string->data[i] <= 'z') {
+            string->data[i] -= 32;
+        }
+    }
+}
+
+void cstring_lower(CString *string) {
+    if (cstring_isempty(*string))
+        return;
+    
+    for (size_t i = 0; string->data[i] != '\0'; i++) {
+        if (string->data[i] >= 'A' && string->data[i] <= 'Z') {
+            string->data[i] += 32;
+        }
+    }
+}
+
+// TODO: fix later
+void cstring_swap(CString *string, size_t b1, size_t e1, size_t b2, size_t e2) {
+    if (b1 < 0 || b2 < 0 || e1 >= string->size || e2 >= string->size)
+        return;
+
+    const char *s1 = cstring_substr(*string, b1, e1);
+    const char *s2 = cstring_substr(*string, b2, e2);
+
+    CString new_string = cstring_new();
+
+    const char *os0 = cstring_substr(*string, 0, b1);
+    cstring_cat(&new_string, os0);
+    cstring_cat(&new_string, s1);
+
+    const char *os1 = b2 > b1 ? cstring_substr(*string, b2, e2) : "";
+    cstring_cat(&new_string, os1);
+    cstring_cat(&new_string, s2);
+
+    cstring_destroy(string);
+    string = &new_string;
 }
