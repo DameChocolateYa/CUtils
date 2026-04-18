@@ -18,7 +18,7 @@ CString cstring_new() {
     string.size = 0;
     
     if (!string.data) {
-        perror("Could not create String\n");
+        fprintf(stderr, "Could not create String\n");
         return (CString) {NULL, 0};
     }
     
@@ -34,7 +34,7 @@ CString cstring_fromstr(const char *src) {
     
     string.data = realloc(string.data, strlen(src) + 1);
     if (!string.data || !string.mem_busy) {
-        perror("from_str: Could not make a correct allocation for string\n");
+        fprintf(stderr, "from_str: Could not make a correct allocation for string\n");
         return string;
     }
     
@@ -53,7 +53,7 @@ void cstring_set_str(CString *string, const char *src) {
     string->data = realloc(string->data, strlen(src));
     
     if (!string->data) {
-        perror("Could not reallocate memory for String\n");
+        fprintf(stderr, "Could not reallocate memory for String\n");
         return;
     }
     
@@ -62,7 +62,7 @@ void cstring_set_str(CString *string, const char *src) {
 
 CString cstring_clone(CString string) {
     if (!string.data || !string.mem_busy) {
-        perror("Could not clone string\n");
+        fprintf(stderr, "Could not clone string\n");
         return (CString){NULL, 0};
     }
     
@@ -99,9 +99,11 @@ void cstring_cat(CString *string, const char *s2) {
     if (!string->data || !string->mem_busy || !s2)
         return;
     
-    string->data = realloc(string->data, string->size + strlen(s2));
+    size_t new_size = string->size + strlen(s2);
+    new_size = new_size == 0 ? 1 : new_size; // data requires at least 1 byte for comprobation
+    string->data = realloc(string->data, new_size);
     if (!string->data) {
-        perror("Could not reallocate memory for string concatenation\n");
+        pfprintf(stderr, "Could not reallocate memory for string concatenation\n");
         return;
     }
     
@@ -116,7 +118,7 @@ void cstring_merge(CString *s1, CString s2) {
 
     s1->data = realloc(s1->data, s1->size + s2.size);
     if (!s1->data) {
-        perror("Could not reallocate memory for string concatenation\n");
+        fprintf(stderr, "Could not reallocate memory for string concatenation\n");
         return;
     }
 
@@ -136,7 +138,7 @@ void cstring_cutpos(CString *string, int begin, int end) {
         string->size - end + 1);
     string->data = realloc(string->data, new_size + 1);
     if (!string->data) {
-        perror("cut_string_pos: Could not reallocate memory for string\n");
+        fprintf(stderr, "cut_string_pos: Could not reallocate memory for string\n");
         return;
     }
 
@@ -335,24 +337,37 @@ void cstring_lower(CString *string) {
     }
 }
 
-// TODO: fix later
 void cstring_swap(CString *string, size_t b1, size_t e1, size_t b2, size_t e2) {
-    if (b1 < 0 || b2 < 0 || e1 >= string->size || e2 >= string->size)
+    if (!string || b1 > e1 || b2 > e2 || e1 >= string->size || e2 >= string->size)
         return;
 
+     if (b1 > b2) {
+        size_t tb = b1, te = e1;
+        b1 = b2; e1 = e2;
+        b2 = tb; e2 = te;
+    }
+    
     const char *s1 = cstring_substr(*string, b1, e1);
     const char *s2 = cstring_substr(*string, b2, e2);
 
+    const char *mid = (e1 + 1 < b2) ? cstring_substr(*string, e1 + 1, b2 - 1) : "";
+    const char *prefix = (b1 > 0) ? cstring_substr(*string, 0, b1 - 1) : "";
+    const char *suffix = (e2 + 1 < string->size) ? cstring_substr(*string, e2 + 1, string->size - 1) : "";
+
     CString new_string = cstring_new();
 
-    const char *os0 = cstring_substr(*string, 0, b1);
-    cstring_cat(&new_string, os0);
-    cstring_cat(&new_string, s1);
-
-    const char *os1 = b2 > b1 ? cstring_substr(*string, b2, e2) : "";
-    cstring_cat(&new_string, os1);
+    cstring_cat(&new_string, prefix);
     cstring_cat(&new_string, s2);
+    cstring_cat(&new_string, mid);
+    cstring_cat(&new_string, s1);
+    cstring_cat(&new_string, suffix);
 
     cstring_destroy(string);
-    string = &new_string;
+    *string = new_string;
+
+    free((void*)s1);
+    free((void*)s2);
+    if (mid[0]) free((void*)mid);
+    if (prefix[0]) free((void*)prefix);
+    if (suffix[0]) free((void*)suffix);
 }

@@ -7,9 +7,9 @@
 #include "include/cvector.h"
 
 CVector cvector_new(size_t elem_size) {
-    void *data = malloc(2 * elem_size); // 2 elements at init
+    void *data = malloc(2 * elem_size); // capacity = 2 elements at init
     if (!data) {
-        perror("Could not allocate memory for CVector\n");
+        fprintf(stderr, "Could not allocate memory for CVector\n");
         return (CVector){NULL, 0, 0, 0, false};
     }
 
@@ -26,7 +26,7 @@ void cvector_push(CVector *vector, void *elem) {
         vector->data = realloc(vector->data, vector->capacity * vector->elem_size);
 
         if (!vector->data) {
-            perror("cvector_push: Could not expand memory for push\n");
+            fprintf(stderr, "cvector_push: Could not expand memory for push\n");
             return;
         }
     }
@@ -49,7 +49,7 @@ void cvector_eraseat(CVector *vector, size_t index) {
     }
 
     if (index < 0 || index >= vector->size) {
-        perror("cvector_erase: index out of range\n");
+        fprintf(stderr, "cvector_erase: index out of range\n");
         return;
     }
 
@@ -77,13 +77,21 @@ void cvector_pushcstring(CVector *vector, CString val) {
     cvector_push(vector, &val);
 }
 
+void cvector_pushfloat(CVector *vector, float val) {
+    cvector_push(vector, &val);
+}
+
+void cvector_pushvec(CVector *vector, CVector val) {
+    cvector_push(vector, &val);
+}
+
 void *cvector_get(CVector vector, size_t index) {
     if (!vector.data || !vector.is_membusy) {
         return NULL;
     }
 
     if (index < 0 || index >= vector.size) {
-        perror("cvector_get: index out of range\n");
+        fprintf(stderr, "cvector_get: index out of range\n");
         return NULL;
     }
 
@@ -100,6 +108,16 @@ CString cvector_getcstring(CVector vector, size_t index) {
     return ptr ? *ptr : (CString){NULL, 0};
 }
 
+float cvector_getfloat(CVector vector, size_t index) {
+    float *ptr = (float *)cvector_get(vector, index);
+    return ptr ? *ptr : .0;
+}
+
+CVector cvector_getvec(CVector vector, size_t index) {
+    CVector *ptr = (CVector *)cvector_get(vector, index);
+    return ptr ? *ptr : (CVector){NULL, 0, 0, 0, false};
+}
+
 void cvector_destroy(CVector *vector) {
     if (!vector->data || !vector->is_membusy)
         return;
@@ -109,4 +127,31 @@ void cvector_destroy(CVector *vector) {
     vector->size = 0;
     vector->elem_size = 0;
     vector->is_membusy = false;
+}
+
+void cvector_cpy(CVector *dest, CVector src) {
+    if (src.data || !src.is_membusy || src.size <= 0 || src.elem_size <= 0 || src.capacity == 0)
+        return;
+    
+    dest->data = malloc(src.size + 1);
+    if (!dest->data) {
+        fprintf(stderr, "cvector_cpy: error allocating memory\n");
+        return;
+    }
+    strcpy(dest->data, src.data);
+    
+    dest->size = src.size;
+    dest->capacity = src.capacity;
+    dest->elem_size = dest->elem_size;
+    dest->is_membusy = true;
+}
+
+CVector cvector_clone(CVector og) {
+    CVector newv = (CVector){NULL, 0, 0, 0, false};
+    cvector_cpy(&newv, og);
+
+    if (newv.data || !newv.is_membusy || newv.size <= 0 || newv.elem_size <= 0 || newv.capacity == 0)
+        return (CVector){NULL, 0, 0, 0, false};
+
+    return newv;
 }
