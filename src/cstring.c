@@ -12,7 +12,7 @@ typedef struct {
     bool mem_busy; // == data
 } CString;
 
-CString cstring_new() {
+CString cstring() {
     CString string;
     string.data = malloc(1);
     string.size = 0;
@@ -27,8 +27,8 @@ CString cstring_new() {
     return string;
 }
 
-CString cstring_fromstr(const char *src) {
-    CString string = cstring_new();
+CString cstring_from(const char *src) {
+    CString string = cstring();
     if (!string.data)
         return string; // The error comes from new_string, no need to put it again
     
@@ -66,7 +66,7 @@ CString cstring_clone(CString string) {
         return (CString){NULL, 0};
     }
     
-    CString cloned = cstring_fromstr(string.data);
+    CString cloned = cstring_from(string.data);
     return cloned;
 }
 
@@ -103,7 +103,7 @@ void cstring_cat(CString *string, const char *s2) {
     new_size = new_size == 0 ? 1 : new_size; // data requires at least 1 byte for comprobation
     string->data = realloc(string->data, new_size);
     if (!string->data) {
-        pfprintf(stderr, "Could not reallocate memory for string concatenation\n");
+        fprintf(stderr, "Could not reallocate memory for string concatenation\n");
         return;
     }
     
@@ -198,7 +198,7 @@ CString cstring_sub(CString string, int begin, int end) {
     }
     s[lenght] = '\0';
 
-    CString new_string = cstring_fromstr(s);
+    CString new_string = cstring_from(s);
     free(s);
 
     return new_string;
@@ -299,7 +299,20 @@ void cstring_destroy(CString *string) {
     if (string->mem_busy) {
         free(string->data);
         string->size = 0;
+        string->mem_busy = false;
     }
+}
+
+void cstring_destroym(int n, ...) {
+    va_list args;
+    va_start(args, n);
+
+    for (int i = 0; i < n; i++) {
+        CString *string = va_arg(args, CString *);
+        cstring_destroy(string);
+    }
+
+    va_end(args);
 }
 
 char *cstring_str(CString string) {
@@ -354,7 +367,7 @@ void cstring_swap(CString *string, size_t b1, size_t e1, size_t b2, size_t e2) {
     const char *prefix = (b1 > 0) ? cstring_substr(*string, 0, b1 - 1) : "";
     const char *suffix = (e2 + 1 < string->size) ? cstring_substr(*string, e2 + 1, string->size - 1) : "";
 
-    CString new_string = cstring_new();
+    CString new_string = cstring();
 
     cstring_cat(&new_string, prefix);
     cstring_cat(&new_string, s2);
@@ -370,4 +383,8 @@ void cstring_swap(CString *string, size_t b1, size_t e1, size_t b2, size_t e2) {
     if (mid[0]) free((void*)mid);
     if (prefix[0]) free((void*)prefix);
     if (suffix[0]) free((void*)suffix);
+}
+
+size_t cstring_ss() {
+    return sizeof(CString);
 }

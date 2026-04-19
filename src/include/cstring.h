@@ -11,8 +11,8 @@ typedef struct {
 } CString;
 
 // Basic
-extern CString cstring_new();
-extern CString cstring_fromstr(const char *src);
+extern CString cstring();
+extern CString cstring_from(const char *src);
 extern void cstring_set_str(CString *string, const char *src);
 extern CString cstring_clone(CString string);
 extern void cstring_clear(CString *string);
@@ -28,6 +28,7 @@ extern void cstring_newfmt(CString *string, const char *fmt, ...);
 extern void cstring_ask(CString *string, ...);
 extern void cstring_newask(CString *string, const char *fmt, ...);
 extern void cstring_destroy(CString *string);
+extern void cstring_destroym(int n, ...);
 extern char *cstring_str(CString string);
 extern bool cstring_isempty(CString string);
 
@@ -35,5 +36,7 @@ extern bool cstring_isempty(CString string);
 extern void cstring_upper(CString *string);
 extern void cstring_lower(CString *string);
 extern void cstring_swap(CString *string, size_t b1, size_t e1, size_t b2, size_t e2);
+
+extern size_t cstring_ss();
 
 #endif
