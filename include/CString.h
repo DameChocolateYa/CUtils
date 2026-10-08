@@ -20,5 +20,6 @@ char *CST_AsStr(CST_String string);
 size_t CST_Len(CST_String string);
 void CST_Set(CST_String *string, char *content);
 void CST_Cat(CST_String *string, char *content);
+void CST_CatChar(CST_String *string, char c);
 
 #endif // CString_H

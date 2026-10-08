@@ -83,3 +83,10 @@ void CST_Cat(CST_String *string, char *content) {
     strcat(string->data, content);
     string->length += CST_StrLen(content);
 }
+
+void CST_CatChar(CST_String *string, char c) {
+    _cst_enlarge_cond(string, string->length + 2);
+    string->data[string->length] = c;
+    string->data[string->length + 1] = '\0';
+    string->length++;
+}
