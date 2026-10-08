@@ -10,7 +10,7 @@ int main(void) {
     CST_CatChar(&string, 'l');
     CST_CatChar(&string, 'i');
 
-    printf("%s\n", CST_AsStr(string));
+    printf("%c\n", CST_At(string, 1));
 
     CST_Destroy(&string);
     return 0;

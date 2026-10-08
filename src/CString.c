@@ -90,3 +90,12 @@ void CST_CatChar(CST_String *string, char c) {
     string->data[string->length + 1] = '\0';
     string->length++;
 }
+
+char CST_At(CST_String string, size_t index) {
+    if (index < 0 || index > string.length) {
+        fprintf(stderr, "CST_At: index out of range\n");
+        return '\0';
+    }
+
+    return string.data[index];
+}

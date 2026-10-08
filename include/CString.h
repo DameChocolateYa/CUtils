@@ -21,5 +21,6 @@ size_t CST_Len(CST_String string);
 void CST_Set(CST_String *string, char *content);
 void CST_Cat(CST_String *string, char *content);
 void CST_CatChar(CST_String *string, char c);
+char CST_At(CST_String string, size_t index);
 
 #endif // CString_H
