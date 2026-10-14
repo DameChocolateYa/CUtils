@@ -99,3 +99,67 @@ char CST_At(CST_String string, size_t index) {
 
     return string.data[index];
 }
+
+void CST_Cut(CST_String *string, size_t begin, size_t end) {
+    if (begin > end) {
+        int temp = begin;
+        begin = end;
+        end = temp;
+    }
+
+    if (begin < 0 || end > string->length) {
+        fprintf(stderr, "CST_Cut: index out of range");
+        return;
+    }
+
+    CST_String ss = CST_Create();
+    _cst_enlarge_cond(&ss, string->capacity);
+
+    bool locked = false;
+    for (int i = 0; i < string->length; i++) {
+        if (i == begin) {
+            locked = true;
+            continue;
+        } else if (i == end) {
+            locked = false;
+            continue;
+        }
+
+        if (!locked)
+            CST_CatChar(&ss, CST_At(*string, i));
+    }
+
+    CST_Destroy(string);
+    *string = ss;
+}
+
+CST_String CST_Subs(CST_String string, size_t begin, size_t end) {
+    if (begin > end) {
+        int temp = begin;
+        begin = end;
+        end = temp;
+    }
+
+    CST_String ss = CST_Create();
+    for (int i = begin; i <= end; i++) {
+        CST_CatChar(&ss, CST_At(string, i));
+    }
+
+    return ss;
+}
+
+CST_String CST_Ask(const char *msg) {
+    CST_String string = CST_Create();
+    _cst_enlarge_cond(&string, 128);
+
+    printf("%s", msg);
+    scanf("%s", string.data);
+    string.length = CST_StrLen(string.data);
+    string.capacity = 128;
+    return string;
+}
+
+void CST_Clear(CST_String *string) {
+    strcpy(string->data, "\0");
+    string->length = 0;
+}

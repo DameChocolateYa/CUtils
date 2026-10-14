@@ -2,15 +2,11 @@
 #include <cstring/CString.h>
 
 int main(void) {
-    CST_String string = CST_Create();
+    CST_String string = CST_Ask(">> ");
 
-    CST_CatChar(&string, 'h');
-    CST_CatChar(&string, 'o');
-    CST_CatChar(&string, 'l');
-    CST_CatChar(&string, 'l');
-    CST_CatChar(&string, 'i');
-
-    printf("%c\n", CST_At(string, 1));
+    for (int i = 0; i < CST_Len(string); i++) {
+        printf("%c\n", CST_At(string, i));
+    }
 
     CST_Destroy(&string);
     return 0;

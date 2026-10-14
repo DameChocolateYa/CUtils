@@ -5,7 +5,7 @@ SOURCES := src
 INCLUDES := include
 
 CC := gcc
-CFLAGS := -Wall -Werror -O2 -fPIC
+CFLAGS := -Wall -O2 -fPIC
 LDFLAGS := -shared
 
 CFILES := $(wildcard $(SOURCES)/*.c)

@@ -22,5 +22,9 @@ void CST_Set(CST_String *string, char *content);
 void CST_Cat(CST_String *string, char *content);
 void CST_CatChar(CST_String *string, char c);
 char CST_At(CST_String string, size_t index);
+void CST_Cut(CST_String *string, size_t begin, size_t end);
+CST_String CST_Subs(CST_String string, size_t begin, size_t end);
+CST_String CST_Ask(const char *msg);
+void CST_Clear(CST_String *string);
 
 #endif // CString_H
