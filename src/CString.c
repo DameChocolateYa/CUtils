@@ -5,6 +5,9 @@
 #include "../include/CString.h"
 
 static void _cst_enlarge(struct cst_string *string) {
+    if (string->enabled == CST_FALSE)
+        return;
+
     string->data = realloc(string->data, string->capacity * 2);
     if (!string->data) {
         fprintf(stderr, "_cst_enlarge: could not reallocate memory for string enlargment\n");
@@ -14,6 +17,9 @@ static void _cst_enlarge(struct cst_string *string) {
 }
 
 static void _cst_enlarge_cond(struct cst_string *string, size_t min) {
+    if (string->enabled == CST_FALSE)
+        return;
+
     while (min > string->capacity)
         _cst_enlarge(string);
 }
@@ -26,6 +32,7 @@ size_t CST_StrLen(const char *s) {
 
 CST_String CST_Create() {
     CST_String string;
+    string.enabled = CST_TRUE;
 
     string.data = malloc(1);
     if (!string.data) {
@@ -39,7 +46,7 @@ CST_String CST_Create() {
 }
 
 void CST_Destroy(CST_String *string) {
-    if (!string->data)
+    if (!string->data || string->enabled == CST_FALSE)
         return;
     
     free(string->data);
@@ -48,6 +55,7 @@ void CST_Destroy(CST_String *string) {
 
 CST_String CST_From(const char *content) {
     CST_String string;
+    string.enabled = CST_TRUE;
 
     string.data = malloc(CST_StrLen(content) + 1);
     if (!string.data || !content) {
@@ -62,6 +70,9 @@ CST_String CST_From(const char *content) {
 }
 
 char *CST_AsStr(CST_String string) {
+    if (string.enabled == CST_FALSE)
+        return "(null)";
+
     if (!string.data)
         return "(null)";
     
@@ -69,22 +80,34 @@ char *CST_AsStr(CST_String string) {
 }
 
 size_t CST_Len(CST_String string) {
+    if (string.enabled == CST_FALSE)
+        return 0;
+
     return string.length;
 }
 
 void CST_Set(CST_String *string, char *content) {
+    if (string->enabled == CST_FALSE)
+        return;
+
     _cst_enlarge_cond(string, CST_StrLen(content) + 1);
     strcpy(string->data, content);
     string->length = CST_StrLen(content);
 }
 
 void CST_Cat(CST_String *string, char *content) {
+    if (string->enabled == CST_FALSE)
+        return;
+
     _cst_enlarge_cond(string, string->length + CST_StrLen(content) + 1);
     strcat(string->data, content);
     string->length += CST_StrLen(content);
 }
 
 void CST_CatChar(CST_String *string, char c) {
+    if (string->enabled == CST_FALSE)
+        return;
+
     _cst_enlarge_cond(string, string->length + 2);
     string->data[string->length] = c;
     string->data[string->length + 1] = '\0';
@@ -92,6 +115,9 @@ void CST_CatChar(CST_String *string, char c) {
 }
 
 char CST_At(CST_String string, size_t index) {
+    if (string.enabled == CST_FALSE)
+        return '\0';
+
     if (index < 0 || index > string.length) {
         fprintf(stderr, "CST_At: index out of range\n");
         return '\0';
@@ -101,6 +127,9 @@ char CST_At(CST_String string, size_t index) {
 }
 
 void CST_Cut(CST_String *string, size_t begin, size_t end) {
+    if (string->enabled == CST_FALSE)
+        return;
+
     if (begin > end) {
         int temp = begin;
         begin = end;
@@ -134,6 +163,9 @@ void CST_Cut(CST_String *string, size_t begin, size_t end) {
 }
 
 CST_String CST_Subs(CST_String string, size_t begin, size_t end) {
+    if (string.enabled == CST_FALSE)
+        return string;
+
     if (begin > end) {
         int temp = begin;
         begin = end;
@@ -150,6 +182,7 @@ CST_String CST_Subs(CST_String string, size_t begin, size_t end) {
 
 CST_String CST_Ask(const char *msg) {
     CST_String string = CST_Create();
+    string.enabled = CST_TRUE;
     _cst_enlarge_cond(&string, 128);
 
     printf("%s", msg);
@@ -160,12 +193,15 @@ CST_String CST_Ask(const char *msg) {
 }
 
 void CST_Clear(CST_String *string) {
+    if (string->enabled == CST_FALSE)
+        return;
+
     strcpy(string->data, "\0");
     string->length = 0;
 }
 
 void CST_Upper(CST_String *string) {
-    if (!string || !string->data || string->length <= 0)
+    if (!string || !string->data || string->length <= 0 || string->enabled == CST_FALSE)
         return;
 
     for (int i = 0; i < string->length; i++) {
@@ -175,7 +211,7 @@ void CST_Upper(CST_String *string) {
 }
 
 void CST_Lower(CST_String *string) {
-    if (!string || !string->data || string->length <= 0)
+    if (!string || !string->data || string->length <= 0 || string->enabled == CST_FALSE)
         return;
     
     for (int i = 0; i < string->length; i++) {
@@ -185,7 +221,7 @@ void CST_Lower(CST_String *string) {
 }
 
 void CST_InverseCase(CST_String *string) {
-    if (!string || !string->data || string->length <= 0)
+    if (!string || !string->data || string->length <= 0 || string->enabled == CST_FALSE)
         return;
     
     for (int i = 0; i < string->length; i++) {
@@ -194,4 +230,29 @@ void CST_InverseCase(CST_String *string) {
         else if (string->data[i] >= 97 && string->data[i] <= 122)
             string->data[i] -= 32;
     }
+}
+
+void CST_Resize(CST_String *string, size_t capacity) {
+    if (!string || !string->data || string->enabled == CST_FALSE)
+        return;
+    
+    string->data = realloc(string->data, capacity);
+    if (!string->data)
+        fprintf(stderr, "CST_Resize: error trying to realloc String memory\n");
+}
+
+void CST_Enable(CST_String *string) {
+    string->enabled = CST_TRUE;
+}
+
+void CST_Disable(CST_String *string) {
+    string->enabled = CST_FALSE;
+}
+
+void CST_ToggleAvailableState(CST_String *string) {
+    string->enabled = string->enabled == CST_TRUE ? CST_FALSE : CST_TRUE;
+}
+
+void CST_SetAvailableState(CST_String *string, CST_BOOL status) {
+    string->enabled = status;
 }

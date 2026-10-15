@@ -9,6 +9,7 @@ typedef struct cst_string {
     char *data;
     size_t length;
     size_t capacity;
+    CST_BOOL enabled;
 } CST_String;
 
 size_t CST_StrLen(const char *s);
@@ -29,5 +30,10 @@ void CST_Clear(CST_String *string);
 void CST_Upper(CST_String *string);
 void CST_Lower(CST_String *string);
 void CST_InverseCase(CST_String *string);
+void CST_Resize(CST_String *string, size_t capacity);
+void CST_Enable(CST_String *string);
+void CST_Disable(CST_String *string);
+void CST_ToggleAvailableState(CST_String *string);
+void CST_SetAvailableState(CST_String *string, CST_BOOL status);
 
 #endif // CString_H
