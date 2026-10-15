@@ -26,5 +26,8 @@ void CST_Cut(CST_String *string, size_t begin, size_t end);
 CST_String CST_Subs(CST_String string, size_t begin, size_t end);
 CST_String CST_Ask(const char *msg);
 void CST_Clear(CST_String *string);
+void CST_Upper(CST_String *string);
+void CST_Lower(CST_String *string);
+void CST_InverseCase(CST_String *string);
 
 #endif // CString_H

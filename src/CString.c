@@ -163,3 +163,35 @@ void CST_Clear(CST_String *string) {
     strcpy(string->data, "\0");
     string->length = 0;
 }
+
+void CST_Upper(CST_String *string) {
+    if (!string || !string->data || string->length <= 0)
+        return;
+
+    for (int i = 0; i < string->length; i++) {
+        if (string->data[i] >= 97 && string->data[i] <= 122)
+            string->data[i] -= 32;
+    }
+}
+
+void CST_Lower(CST_String *string) {
+    if (!string || !string->data || string->length <= 0)
+        return;
+    
+    for (int i = 0; i < string->length; i++) {
+        if (string->data[i] >= 65 && string->data[i] <= 90)
+            string->data[i] += 32;
+    }
+}
+
+void CST_InverseCase(CST_String *string) {
+    if (!string || !string->data || string->length <= 0)
+        return;
+    
+    for (int i = 0; i < string->length; i++) {
+        if (string->data[i] >= 65 && string->data[i] <= 90)
+            string->data[i] += 32;
+        else if (string->data[i] >= 97 && string->data[i] <= 122)
+            string->data[i] -= 32;
+    }
+}

@@ -3,6 +3,7 @@
 
 int main(void) {
     CST_String string = CST_Ask(">> ");
+    CST_InverseCase(&string);
 
     for (int i = 0; i < CST_Len(string); i++) {
         printf("%c\n", CST_At(string, i));
