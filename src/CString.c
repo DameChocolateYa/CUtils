@@ -256,3 +256,20 @@ void CST_ToggleAvailableState(CST_String *string) {
 void CST_SetAvailableState(CST_String *string, CST_BOOL status) {
     string->enabled = status;
 }
+
+CST_String CST_Clone(CST_String string) {
+    CST_String ss;
+    ss.data = malloc(string.capacity);
+
+    if (!ss.data) {
+        fprintf(stderr, "CST_Clone: error cloning string\n");
+        return ss;
+    }
+
+    strcpy(ss.data, string.data);
+    ss.length = string.length;
+    ss.enabled = string.enabled;
+    ss.capacity = string.capacity;
+
+    return ss;
+}

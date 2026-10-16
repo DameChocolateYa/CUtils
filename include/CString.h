@@ -35,5 +35,6 @@ void CST_Enable(CST_String *string);
 void CST_Disable(CST_String *string);
 void CST_ToggleAvailableState(CST_String *string);
 void CST_SetAvailableState(CST_String *string, CST_BOOL status);
+CST_String CST_Clone(CST_String string);
 
 #endif // CString_H
