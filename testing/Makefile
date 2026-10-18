@@ -5,8 +5,8 @@ SOURCES := src
 INCLUDES := include
 
 CC := gcc
-CFLAGS := -Wall -Werror -O2 -I$(INCLUDES)
-LDFLAGS := -lcstring
+CFLAGS := -Wall -O2 -I$(INCLUDES)
+LDFLAGS := -lcutils
 
 CFILES := $(wildcard $(SOURCES)/*.c)
 OFILES := $(CFILES:$(SOURCES)/%.c=$(BUILD)/%.o)

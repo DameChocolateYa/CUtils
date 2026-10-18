@@ -1,4 +1,4 @@
-TARGET := cstring
+TARGET := cutils
 
 BUILD := build
 SOURCES := src
