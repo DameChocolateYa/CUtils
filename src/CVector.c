@@ -94,6 +94,26 @@ void CVT_PushChar(CVT_Vector *vector, char element) {
     CVT_Push(vector, &element);
 }
 
+void CVT_PushChars(CVT_Vector *vector, char *element) {
+    if (vector->element_size != sizeof(char *)) {
+        fprintf(stderr, "CVT_PushChars: vector type is not char *\n");
+        return;
+    }
+
+    CVT_Push(vector, element);
+}
+
+void CVT_PushString(CVT_Vector *vector, CST_String element) {
+    if (vector->element_size != sizeof(CST_String)) {
+        fprintf(stderr, "CVT_PushString: vector type is not CST_String\n");
+        return;
+    }
+
+    CST_String clone = CST_Clone(element);
+
+    CVT_Push(vector, &clone);
+}
+
 void *CVT_At(CVT_Vector vector, size_t index) {
     if (!vector.data) {
         fprintf(stderr, "CVT_At: invalid vector\n");
@@ -155,6 +175,26 @@ char CVT_AtChar(CVT_Vector vector, size_t index) {
     }
 
     char *element = (char *)CVT_At(vector, index);
+    return *element;
+}
+
+char *CVT_AtChars(CVT_Vector vector, size_t index) {
+    if (vector.element_size != sizeof(char *)) {
+        fprintf(stderr, "CVT_AtChars: vector type is not char *\n");
+        return NULL;
+    }
+
+    char *element = (char *)CVT_At(vector, index);
+    return element;
+}
+
+CST_String CVT_AtString(CVT_Vector vector, size_t index) {
+    if (vector.element_size != sizeof(CST_String)) {
+        fprintf(stderr, "CVT_AtString: vector type is not a CST_String\n");
+        return (struct cst_string){0};
+    }
+
+    CST_String *element = (CST_String *)CVT_At(vector, index);
     return *element;
 }
 

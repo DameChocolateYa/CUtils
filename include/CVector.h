@@ -1,7 +1,8 @@
 #ifndef CVECTOR_H
 #define CVECTOR_H
 
-#include <stdio.h> 
+#include <stdio.h>
+#include "CString.h"
 
 #define CVT_BOOL bool
 #define CVT_TRUE 1
@@ -24,12 +25,16 @@ void CVT_PushFloat(CVT_Vector *vector, float element);
 void CVT_PushDouble(CVT_Vector *vector, double element);
 void CVT_PushBool(CVT_Vector *vector, bool element);
 void CVT_PushChar(CVT_Vector *vector, char element);
+void CVT_PushChars(CVT_Vector *vector, char *element);
+void CVT_PushString(CVT_Vector *vector, CST_String element);
 void *CVT_At(CVT_Vector vector, size_t index);
 int CVT_AtI32(CVT_Vector vector, size_t index);
 float CVT_AtFloat(CVT_Vector vector, size_t index);
 double CVT_AtDouble(CVT_Vector vector, size_t index);
 bool CVT_AtBool(CVT_Vector vector, size_t index);
 char CVT_AtChar(CVT_Vector vector, size_t index);
+char *CVT_AtChars(CVT_Vector vector, size_t index);
+CST_String CVT_AtString(CVT_Vector vector, size_t index);
 void CVT_Destroy(CVT_Vector *vector);
 CVT_Vector CVT_Clone(CVT_Vector vector);
 void CVT_Clear(CVT_Vector *vector);
