@@ -2,7 +2,9 @@
 #define CVECTOR_H
 
 #include <stdio.h>
+
 #include "CString.h"
+typedef struct cst_string CST_String;
 
 #define CVT_BOOL bool
 #define CVT_TRUE 1
@@ -35,6 +37,13 @@ bool CVT_AtBool(CVT_Vector vector, size_t index);
 char CVT_AtChar(CVT_Vector vector, size_t index);
 char *CVT_AtChars(CVT_Vector vector, size_t index);
 CST_String CVT_AtString(CVT_Vector vector, size_t index);
+int *CVT_GetI32(CVT_Vector vector, size_t index);
+float *CVT_GetFloat(CVT_Vector vector, size_t index);
+double *CVT_GetDouble(CVT_Vector vector, size_t index);
+bool *CVT_GetBool(CVT_Vector vector, size_t index);
+char *CVT_GetChar(CVT_Vector vector, size_t index);
+char **CVT_GetChars(CVT_Vector vector, size_t index);
+CST_String *CVT_GetString(CVT_Vector vector, size_t index);
 void CVT_Destroy(CVT_Vector *vector);
 CVT_Vector CVT_Clone(CVT_Vector vector);
 void CVT_Clear(CVT_Vector *vector);

@@ -43,7 +43,7 @@ void CVT_Push(CVT_Vector *vector, const void *element) {
         return;
     }
 
-    _cvt_enlarge_cond(vector, vector->size + 1);
+    _cvt_enlarge_cond(vector, (vector->size + 1) * vector->element_size);
 
     memcpy((unsigned char *)vector->data + vector->size * vector->element_size, element, vector->element_size);
     vector->size++;
@@ -190,12 +190,75 @@ char *CVT_AtChars(CVT_Vector vector, size_t index) {
 
 CST_String CVT_AtString(CVT_Vector vector, size_t index) {
     if (vector.element_size != sizeof(CST_String)) {
-        fprintf(stderr, "CVT_AtString: vector type is not a CST_String\n");
+        fprintf(stderr, "CVT_AtString: vector type is not CST_String\n");
         return (struct cst_string){0};
     }
 
     CST_String *element = (CST_String *)CVT_At(vector, index);
     return *element;
+}
+
+int *CVT_GetI32(CVT_Vector vector, size_t index) {
+    if (vector.element_size != sizeof(int)) {
+        fprintf(stderr, "CVT_GetI32: vector type is not i32\n");
+        return NULL;
+    }
+
+    return (int *)CVT_At(vector, index);
+}
+
+float *CVT_GetFloat(CVT_Vector vector, size_t index) {
+    if (vector.element_size != sizeof(float)) {
+        fprintf(stderr, "CVT_GetFloat: vector type is not float\n");
+        return NULL;
+    }
+
+    return (float *)CVT_At(vector, index);
+}
+
+double *CVT_GetDouble(CVT_Vector vector, size_t index) {
+    if (vector.element_size != sizeof(double)) {
+        fprintf(stderr, "CVT_GetDouble: vector type is not double\n");
+        return NULL;
+    }
+
+    return (double *)CVT_At(vector, index);
+}
+
+bool *CVT_GetBool(CVT_Vector vector, size_t index) {
+    if (vector.element_size != sizeof(double)) {
+        fprintf(stderr, "CVT_GetBool: vector type is not bool\n");
+        return NULL;
+    }
+
+    return (bool *)CVT_At(vector, index);
+}
+
+char *CVT_GetChar(CVT_Vector vector, size_t index) {
+    if (vector.element_size != sizeof(char)) {
+        fprintf(stderr, "CVT_GetChar: vector type is not char\n");
+        return NULL;
+    }
+
+    return (char *)CVT_At(vector, index);
+}
+
+char **CVT_GetChars(CVT_Vector vector, size_t index) {
+    if (vector.element_size != sizeof(char *)) {
+        fprintf(stderr, "CVT_GetChars: vector type is not char *\n");
+        return NULL;
+    }
+
+    return (char **)CVT_At(vector, index);
+}
+
+CST_String *CVT_GetString(CVT_Vector vector, size_t index) {
+    if (vector.element_size != sizeof(CST_String)) {
+        fprintf(stderr, "CVT_GetString: vector type is not CST_String\n");
+        return NULL;
+    }
+
+    return (CST_String *)CVT_At(vector, index);
 }
 
 void CVT_Destroy(CVT_Vector *vector) {

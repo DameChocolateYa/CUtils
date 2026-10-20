@@ -5,6 +5,9 @@
 #define CST_TRUE 1
 #define CST_FALSE 0
 
+#include <stddef.h>
+#include "CVector.h"
+
 typedef struct cst_string {
     char *data;
     size_t length;
@@ -36,5 +39,7 @@ void CST_Disable(CST_String *string);
 void CST_ToggleAvailableState(CST_String *string);
 void CST_SetAvailableState(CST_String *string, CST_BOOL status);
 CST_String CST_Clone(CST_String string);
+
+CVT_Vector CST_Chars(CST_String string);
 
 #endif // CString_H

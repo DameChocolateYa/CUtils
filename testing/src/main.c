@@ -1,28 +1,17 @@
-#include <stdio.h>
-#include <cutils/CVector.h>
 #include <cutils/CString.h>
-
-typedef struct color {
-    int r;
-    int g;
-    int b;
-} Color;
+#include <cutils/CVector.h>
+#include <cutils/CMath.h>
 
 int main(void) {
-    CVT_Vector vec = CVT_Create(Color);
+    CST_String string = CST_From("Hola");
 
-    Color c1 = {255, 0, 255};
-    CVT_Push(&vec, &c1);
-
-    Color c2 = {0, 0, 255};
-    CVT_Push(&vec, &c2);
-
-    for (int i = 0; i < CVT_Size(vec); i++) {
-        Color *c = CVT_At(vec, i);
-        printf("%d, %d, %d\n", c->r, c->g, c->b);
+    CVT_Vector v = CST_Chars(string);
+    for (int i = 0; i < v.size; i++) {
+        printf("%c\n", CVT_AtChar(v, i));
     }
 
-    CVT_Destroy(&vec);
+    CVT_Destroy(&v);
+    CST_Destroy(&string);
 
     return 0;
 }

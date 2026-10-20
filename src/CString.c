@@ -273,3 +273,12 @@ CST_String CST_Clone(CST_String string) {
 
     return ss;
 }
+CVT_Vector CST_Chars(CST_String string) {
+    CVT_Vector chars = CVT_Create(char);
+
+    for (int i = 0; i < string.length; i++) {
+        CVT_PushChar(&chars, string.data[i]);
+    }
+
+    return chars;
+}
